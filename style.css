@@ -1,0 +1,9 @@
+td {
+    height: 30px;
+    width: 30px;
+    background-color: red;
+}
+.today {
+    color: white;
+    font-weight: bold;
+}
