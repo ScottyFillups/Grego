@@ -10,11 +10,4 @@ function $(selector) {
     }
 }
 
-var calendar = new Grego($('#year'), $('#month'), $('.day'), 'today');
-calendar.generate();
-$('#prev').addEventListener('click', function() {
-    calendar.showPrevMonth();
-});
-$('#next').addEventListener('click', function() {
-    calendar.showNextMonth();
-});
+var calendar = new Grego();
