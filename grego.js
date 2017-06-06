@@ -1,6 +1,6 @@
 // The || operator can be used for settings defaults, but it's bad practice, as passing values like "" or 0 will break it
 // that being said, the selectors can't be "" or 0 anyways, so... :3
-function Grego(ySlct, mSlct, hSlct, dSlct, tdSlct, opt) {
+function Grego(ySlct, mSlct, hSlct, dSlct, tdSlct, nxtBtnSlct, prvBtnSlct) {
     this.dLookup = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
     this.mLookup = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
     this.ySlct = ySlct || 'grego-year';
@@ -8,14 +8,20 @@ function Grego(ySlct, mSlct, hSlct, dSlct, tdSlct, opt) {
     this.hSlct = hSlct || 'grego-header';
     this.dSlct = dSlct || 'grego-day';
     this.tdSlct = tdSlct || 'grego-today';
+    this.nxtBtnSlct = nxtBtnSlct || 'grego-next';
+    this.prvBtnSlct = prvBtnSlct || 'grego-prev';
     this.today = new Date();
     this.date = new Date();
-    
+    var ctx = this;
+
+    //warning: the 'this' above and the 'this' below seem to be different
     try {
         this.gregoNode = document.getElementById('grego-calendar');
         this.yNode = document.createElement('h1');
         this.mNode = document.createElement('h2');
         this.dNodes = new Array();
+        this.prvBtn = document.createElement('button');
+        this.nxtBtn = document.createElement('button');
 
         var table = document.createElement('table');
         var thead = document.createElement('thead');
@@ -24,7 +30,18 @@ function Grego(ySlct, mSlct, hSlct, dSlct, tdSlct, opt) {
 
         this.yNode.id = this.ySlct;
         this.mNode.id = this.mSlct;
-        
+        this.nxtBtn.id = this.nxtBtnSlct;
+        this.prvBtn.id = this.prvBtnSlct;
+
+        this.prvBtn.innerHTML = '&#10094;';
+        this.nxtBtn.innerHTML = '&#10095;';
+        this.prvBtn.addEventListener('click', function() {
+            ctx.showPrevMonth(ctx);
+        });
+        this.nxtBtn.addEventListener('click', function() {
+            ctx.showNextMonth(ctx);
+        });
+
         this.gregoNode.appendChild(this.yNode);
         this.gregoNode.appendChild(this.mNode);
         this.gregoNode.appendChild(table);
@@ -47,26 +64,23 @@ function Grego(ySlct, mSlct, hSlct, dSlct, tdSlct, opt) {
                 rowTmp.appendChild(this.dNodes[j+i*6]);
             }
         }
+        this.gregoNode.appendChild(this.prvBtn);
+        this.gregoNode.appendChild(this.nxtBtn);
     } catch (e) {
         console.log('Grego calendar initialization failed, did you remember to add <div id=\'grego-calendar\'></div>? Here\'s the error message: ' + e);
     }
 }
-
-/*function Grego(ySelector, mSelector, dSelector, tdClass) {
-    this.dayLookup = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
-    this.monthLookup = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
-    this.ySelector = ySelector;
-    this.mSelector = mSelector;
-    this.dSelector = dSelector;
-    this.tdClass = tdClass;
-    this.today = new Date();
-    this.date = new Date();
-}
+Grego.prototype.getFirstDay = function(year, month) {
+    return new Date(year, month, 1).getDay();
+};
+Grego.prototype.getDaysInMonth = function(year, month) {
+    return new Date(year, month+1, 0).getDate();
+};
 Grego.prototype.clear = function() {
-    for (var i = 0; i < this.dSelector.length; i++) {
-        var elem = this.dSelector[i];
+    for (var i = 0; i < this.dNodes.length; i++) {
+        var elem = this.dNodes[i];
         var strIndex = elem.className.indexOf(this.tdClass);
-        elem.innerHTML = "";
+        elem.innerHTML = '';
         if (strIndex !== -1) {
             elem.className = elem.className.slice(0, strIndex-1);
         }
@@ -79,39 +93,32 @@ Grego.prototype.generate = function() {
     var daysInMonth = this.getDaysInMonth(this.date.getFullYear(), this.date.getMonth());
     
     for (var i = 1; i <= daysInMonth; i++) {
-        var dDOM = this.dSelector[startDay + i - 1];
+        var dNode = this.dNodes[startDay + i - 1];
         if (i === this.today.getDate() && 
             this.date.getMonth() === this.today.getMonth() &&
             this.date.getFullYear() === this.today.getFullYear()) {
-            dDOM.className += " " + this.tdClass;
+            dNode.className += " " + this.tdClass;
         }
-        dDOM.innerHTML = i.toString();
+        dNode.innerHTML = i.toString();
     }
-    this.mSelector.innerHTML = this.monthLookup[this.date.getMonth()];
-    this.ySelector.innerHTML = this.date.getFullYear();
+    this.mNode.innerHTML = this.mLookup[this.date.getMonth()];
+    this.yNode.innerHTML = this.date.getFullYear();
 };
-Grego.prototype.showNextMonth = function() {
-    if (this.date.getMonth() != 11) {
-        this.date.setFullYear(this.date.getFullYear(), this.date.getMonth()+1, 1);
+Grego.prototype.showNextMonth = function(ctx) {
+    if (ctx.date.getMonth() != 11) {
+        ctx.date.setFullYear(ctx.date.getFullYear(), ctx.date.getMonth()+1, 1);
     } else {
-        this.date.setFullYear(this.date.getFullYear()+1, 0, 1);
+        ctx.date.setFullYear(ctx.date.getFullYear()+1, 0, 1);
     }
-    this.clear();
-    this.generate();
+    ctx.clear();
+    ctx.generate();
 };
-Grego.prototype.showPrevMonth = function() {
-    if (this.date.getMonth() != 0) {
-        this.date.setFullYear(this.date.getFullYear(), this.date.getMonth()-1, 1);
+Grego.prototype.showPrevMonth = function(ctx) {
+    if (ctx.date.getMonth() != 0) {
+        ctx.date.setFullYear(ctx.date.getFullYear(), ctx.date.getMonth()-1, 1);
     } else {
-        this.date.setFullYear(this.date.getFullYear()-1, 11, 1);
+        ctx.date.setFullYear(ctx.date.getFullYear()-1, 11, 1);
     }
-    this.clear();
-    this.generate();
+    ctx.clear();
+    ctx.generate();
 };
-Grego.prototype.getFirstDay = function(year, month) {
-    return new Date(year, month, 1).getDay();
-};
-Grego.prototype.getDaysInMonth = function(year, month) {
-    return new Date(year, month+1, 0).getDate();
-};
-*/
