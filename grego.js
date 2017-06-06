@@ -60,8 +60,8 @@ function Grego(ySlct, mSlct, hSlct, dSlct, tdSlct, nxtBtnSlct, prvBtnSlct) {
             tbody.appendChild(rowTmp);
             for (var j = 0; j < 7; j++) {
                 this.dNodes.push(document.createElement('td'));
-                this.dNodes[j+i*6].className = this.dSlct;
-                rowTmp.appendChild(this.dNodes[j+i*6]);
+                this.dNodes[j+i*7].className = this.dSlct;
+                rowTmp.appendChild(this.dNodes[j+i*7]);
             }
         }
         this.gregoNode.appendChild(this.prvBtn);
@@ -69,6 +69,8 @@ function Grego(ySlct, mSlct, hSlct, dSlct, tdSlct, nxtBtnSlct, prvBtnSlct) {
     } catch (e) {
         console.log('Grego calendar initialization failed, did you remember to add <div id=\'grego-calendar\'></div>? Here\'s the error message: ' + e);
     }
+
+    this.generate();
 }
 Grego.prototype.getFirstDay = function(year, month) {
     return new Date(year, month, 1).getDay();
