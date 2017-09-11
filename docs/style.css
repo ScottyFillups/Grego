@@ -1,17 +1,28 @@
 html, body {
-    margin: 0;
-    font-family: 'Arial', sans-serif;
-    text-align: center;
+  color: #052e87;
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  text-align: center;
 }
 #grego-calendar table {
-    margin: 0 auto;
+  margin: 0 auto;
 }
 .grego-day {
-    width: 50px;
-    height: 50px;
-    background-color: gray;
-    line-height: 50px;
+  width: 50px;
+  height: 50px;
+  background-color: #f2f2f2;
+  line-height: 50px;
 }
-#grego-today {
-    font-size: 2em;
+.grego-today {
+  font-weight: bold;
+  font-size: 1.5em;
+}
+button {
+  margin: 10px;
+  font-size: 1.3em;
+  padding: 0 10px;
+  background-color: transparent;
+  color: #052e87;
+  border: 1px solid #052e87;
+  border-radius: 3px;
 }
